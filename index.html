@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Chat with Sarvam</title>
+  <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%);
+            background-size: 300% 300%;
+            animation: gradientShift 8s ease infinite;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(255,255,255,0.08) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 80%, rgba(255,255,255,0.06) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 25px 50px rgba(0,0,0,0.15), 0 0 0 1px rgba(255,255,255,0.1) inset, 0 1px 0 rgba(255,255,255,0.2) inset; }
+            50% { box-shadow: 0 25px 60px rgba(102, 126, 234,0.2), 0 0 0 1px rgba(255,255,255,0.15) inset, 0 1px 0 rgba(255,255,255,0.25) inset; }
+        }
+
+        @keyframes sparkle {
+            0%, 100% { opacity: 0.3; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+        
+        h1 {
+            color: #fff;
+            margin-bottom: 8px;
+            font-size: 3.5em;
+            font-weight: 800;
+            text-align: center;
+            background: linear-gradient(135deg, #fff 0%, #f8f9ff 50%, #e8ecff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(255,255,255,0.3);
+            letter-spacing: -0.02em;
+            position: relative;
+        }
+
+        h1::after {
+            content: '✨';
+            position: absolute;
+            top: -10px;
+            right: -40px;
+            font-size: 0.6em;
+            animation: sparkle 2s ease-in-out infinite;
+        }
+
+        .tagline {
+            color: rgba(255,255,255,0.95);
+            font-size: 1.3em;
+            font-weight: 300;
+            text-align: center;
+            margin-bottom: 35px;
+            font-style: italic;
+            letter-spacing: 0.5px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 24px;
+            padding: 45px 35px;
+            box-shadow: 
+                0 25px 50px rgba(0,0,0,0.15),
+                0 0 0 1px rgba(255,255,255,0.1) inset,
+                0 1px 0 rgba(255,255,255,0.2) inset;
+            min-width: 380px;
+            max-width: 750px;
+            width: 100%;
+            position: relative;
+            animation: glow 4s ease-in-out infinite;
+        }
+
+        .chat-container::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(135deg, #667eea, #764ba2, #f093fb, #f5576c);
+            border-radius: 26px;
+            z-index: -1;
+            opacity: 0.3;
+            filter: blur(6px);
+        }
+        
+        .custom-input {
+            border: 2px solid transparent;
+            background: linear-gradient(#fff, #fff) padding-box,
+                       linear-gradient(135deg, #667eea, #764ba2, #f093fb) border-box;
+            border-radius: 20px;
+            padding: 1.5rem 2rem;
+            font-size: 1.2rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 
+                0 4px 20px rgba(0,0,0,0.08),
+                0 1px 3px rgba(0,0,0,0.1);
+            width: 100%;
+            height: 220px;
+            text-align: left;
+            box-sizing: border-box;
+            resize: vertical;
+            font-family: inherit;
+            line-height: 1.6;
+        }
+        
+        .custom-input::placeholder {
+            text-align: left;
+            color: #8e8e93;
+            font-weight: 400;
+        }
+        
+        .custom-input:focus {
+            border: 2px solid transparent;
+            background: linear-gradient(#fff, #fff) padding-box,
+                       linear-gradient(135deg, #f093fb, #f5576c, #4facfe) border-box;
+            box-shadow: 
+                0 8px 30px rgba(240, 147, 251, 0.25),
+                0 0 0 4px rgba(240, 147, 251, 0.1);
+            outline: none;
+            transform: translateY(-2px);
+        }
+        
+        .get-chat-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            background-size: 200% 200%;
+            color: white;
+            border: none;
+            padding: 18px 40px;
+            font-size: 1.2em;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 600;
+            box-shadow: 
+                0 8px 25px rgba(102, 126, 234, 0.4),
+                0 3px 12px rgba(0,0,0,0.1);
+            min-width: 180px;
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 1em;
+        }
+
+        .get-chat-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.6s;
+        }
+
+        .get-chat-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 
+                0 12px 35px rgba(102, 126, 234, 0.5),
+                0 6px 20px rgba(0,0,0,0.15);
+            background-position: 100% 0;
+        }
+
+        .get-chat-btn:hover::before {
+            left: 100%;
+        }
+
+        .get-chat-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .get-chat-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            color: #ff3b6d;
+            font-size: 0.95em;
+            margin-top: 8px;
+            text-align: center;
+            font-weight: 500;
+            padding: 8px 16px;
+            background: rgba(255, 59, 109, 0.1);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 59, 109, 0.2);
+        }
+
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loading-box {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.25);
+            padding: 40px 60px;
+            font-size: 1.4em;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-weight: 600;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .loader {
+            width: 28px;
+            height: 28px;
+            border: 4px solid rgba(102, 126, 234, 0.3);
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            display: inline-block;
+            animation: spin 1s linear infinite;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .nav-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 0.9em;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+            display: inline-block;
+            font-weight: 500;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .drawer {
+            position: fixed;
+            top: 0;
+            left: -320px;
+            width: 300px;
+            height: 100vh;
+            background: linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(248,250,255,0.95) 100%);
+            backdrop-filter: blur(25px);
+            box-shadow: 
+                4px 0 40px rgba(102, 126, 234, 0.15),
+                0 0 0 1px rgba(255,255,255,0.2) inset;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+            transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border-right: 1px solid rgba(102, 126, 234, 0.1);
+        }
+
+        .drawer.open {
+            left: 0;
+        }
+
+        .drawer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 30px 30px 25px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            background-size: 200% 200%;
+            animation: gradientShift 6s ease infinite;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .drawer-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 30% 40%, rgba(255,255,255,0.15) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .drawer-header span {
+            position: relative;
+            z-index: 1;
+        }
+
+        .drawer-title {
+            font-size: 1.6em;
+            font-weight: 700;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            letter-spacing: 0.5px;
+        }
+
+        .drawer-close {
+            cursor: pointer;
+            font-size: 2em;
+            transition: all 0.3s ease;
+            padding: 5px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .drawer-close:hover {
+            background: rgba(255,255,255,0.2);
+            transform: rotate(90deg);
+        }
+
+        .drawer-link {
+            padding: 20px 30px;
+            text-decoration: none;
+            color: #4a5568;
+            font-size: 1.15em;
+            border-bottom: 1px solid rgba(102, 126, 234, 0.08);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            font-weight: 500;
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .drawer-link::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(135deg, #667eea, #f093fb);
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+        }
+
+        .drawer-link::after {
+            content: '→';
+            font-size: 1.2em;
+            opacity: 0;
+            transition: all 0.3s ease;
+            margin-left: auto;
+            color: #667eea;
+        }
+
+        .drawer-link:hover {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.08), rgba(240, 147, 251, 0.05));
+            color: #667eea;
+            padding-left: 40px;
+            font-weight: 600;
+        }
+
+        .drawer-link:hover::before {
+            transform: scaleY(1);
+        }
+
+        .drawer-link:hover::after {
+            opacity: 1;
+        }
+
+        .drawer-backdrop {
+            display: none;
+            position: fixed;
+            top: 0; 
+            left: 0;
+            width: 100vw; 
+            height: 100vh;
+            background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(4px);
+            z-index: 9999;
+        }
+
+        .drawer.open ~ .drawer-backdrop {
+            display: block;
+        }
+
+        .drawer-logout {
+            margin: auto 30px 40px 30px;
+            padding: 18px 20px;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 50%, #ff5757 100%);
+            color: #fff;
+            border: none;
+            border-radius: 16px;
+            font-size: 1.1em;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            justify-content: center;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 600;
+            box-shadow: 
+                0 8px 25px rgba(255, 107, 107, 0.3),
+                0 0 0 1px rgba(255,255,255,0.1) inset;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .drawer-logout::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.6s;
+        }
+
+        .drawer-logout:hover {
+            background: linear-gradient(135deg, #e55353 0%, #ff6b6b 50%, #d63031 100%);
+            transform: translateY(-3px);
+            box-shadow: 
+                0 12px 35px rgba(255, 107, 107, 0.4),
+                0 0 0 1px rgba(255,255,255,0.15) inset;
+        }
+
+        .drawer-logout:hover::before {
+            left: 100%;
+        }
+
+        .drawer-logout span {
+            font-size: 1.3em;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+
+        #drawer-icon {
+            position: fixed;
+            top: 28px;
+            left: 28px;
+            z-index: 10001;
+            cursor: pointer;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 12px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        #drawer-icon:hover {
+            background: rgba(255,255,255,0.3);
+            transform: scale(1.1);
+        }
+
+        #drawer-icon span {
+            font-size: 1.5em;
+            color: #fff;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.8em;
+            }
+            
+            .tagline {
+                font-size: 1.1em;
+            }
+            
+            .chat-container {
+                padding: 35px 25px;
+                min-width: 320px;
+            }
+            
+            .custom-input {
+                height: 180px;
+                font-size: 1.1rem;
+                padding: 1.3rem 1.5rem;
+            }
+        }
+
+        .chat-container > * {
+            animation: fadeInUp 0.6s ease forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .chat-container > *:nth-child(1) { animation-delay: 0.1s; }
+        .chat-container > *:nth-child(2) { animation-delay: 0.2s; }
+        .chat-container > *:nth-child(3) { animation-delay: 0.3s; }
+        .chat-container > *:nth-child(4) { animation-delay: 0.4s; }
+        .chat-container > *:nth-child(5) { animation-delay: 0.5s; }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+    </style>
+</head>
+<body>
+  
+    <div class="chat-container">
+        <h1>LUMORA</h1>
+        <p class="tagline">Where your emotions bloom into art of an artist within</p>
+        
+  
+        
+        <div id="chat-box"></div>
+        <textarea class="custom-input" id="user-input" placeholder="Share your thoughts, feelings, or experiences... I'll turn them into a beautiful art for you!"></textarea>
+        <span id="error-message" class="error-message"></span>
+        <button class="get-chat-btn" onclick="sendMessage()" id="chatBtn">Generate</button>
+    </div>
+
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="loading-box">
+            <span class="loader"></span>
+            Creating your Artful Verse...
+        </div>
+    </div>
+<div id="drawer-icon" style="position:fixed; top:24px; left:24px; z-index:10001; cursor:pointer;">
+  <span style="font-size:2em; color: #f8f8f8;">&#9776;</span>
+</div>
+
+<div id="drawer" class="drawer">
+  <div class="drawer-header">
+    <span class="drawer-title">LUMORA</span>
+    <span id="drawer-close" class="drawer-close">&times;</span>
+  </div>
+  <a href="index.html" class="drawer-link">
+ Home
+  </a>
+  <a href="saved.html" class="drawer-link">
+     Saved Work
+  </a>
+  <a href="about.html" class="drawer-link">
+     About
+  </a>
+<a href="login.html" class="drawer-logout" style="text-decoration:none; display:flex; align-items:center; justify-content:center;">
+  <span>🔑</span> Logout
+</a>
+
+</div>
+<div id="drawer-backdrop" class="drawer-backdrop"></div>
+
+    <script>
+        async function sendMessage() {
+            const input = document.getElementById('user-input');
+            const errorSpan = document.getElementById('error-message');
+            const loadingOverlay = document.getElementById('loading-overlay');
+            const chatBtn = document.getElementById('chatBtn');
+            const message = input.value.trim();
+            
+            errorSpan.textContent = "";
+            
+            // Validation
+            if (!message) {
+                errorSpan.textContent = "Please enter a message before sending.";
+                input.focus();
+                return;
+            }
+            
+            if (message.length > 1000) {
+                errorSpan.textContent = "Message is too long. Please keep it under 1000 characters.";
+                input.focus();
+                return;
+            }
+            
+            // Disable button and show loading
+            chatBtn.disabled = true;
+            loadingOverlay.style.display = "flex";
+            
+            try {
+                const res = await fetch("http://127.0.0.1:8000/generate-poem", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ message }),
+                });
+
+                if (!res.ok) {
+                    const errorData = await res.json();
+                    throw new Error(errorData.detail || `HTTP error! status: ${res.status}`);
+                }
+
+                const data = await res.json();
+                
+                // Store the generated poem
+                localStorage.setItem('chatBotReply', data.reply);
+                localStorage.setItem('originalMessage', message);
+                
+                // Clear input and redirect
+                input.value = "";
+                window.location.href = "chat.html";
+                
+            } catch (error) {
+                console.error('Error:', error);
+                errorSpan.textContent = error.message || "Failed to generate poem. Please try again.";
+            } finally {
+                // Re-enable button and hide loading
+                chatBtn.disabled = false;
+                loadingOverlay.style.display = "none";
+            }
+        }
+
+        document.getElementById('user-input').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.ctrlKey && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        // Auto-focus on input when page loads
+        window.addEventListener('load', function() {
+            document.getElementById('user-input').focus();
+        });
+        // Drawer open/close logic
+const drawerIcon = document.getElementById('drawer-icon');
+const drawer = document.getElementById('drawer');
+const drawerClose = document.getElementById('drawer-close');
+const drawerBackdrop = document.getElementById('drawer-backdrop');
+
+drawerIcon.onclick = function() {
+  drawer.classList.add('open');
+  drawerBackdrop.style.display = 'block';
+  drawerIcon.style.display = 'none'; // Hide menu icon when drawer opens
+};
+drawerClose.onclick = function() {
+  drawer.classList.remove('open');
+  drawerBackdrop.style.display = 'none';
+  drawerIcon.style.display = 'block'; // Show menu icon when drawer closes
+};
+drawerBackdrop.onclick = function() {
+  drawer.classList.remove('open');
+  drawerBackdrop.style.display = 'none';
+  drawerIcon.style.display = 'block'; // Show menu icon when drawer closes
+};
+    </script>
+</body>
+</html>

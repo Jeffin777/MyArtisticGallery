@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Sweet Snippet Chat</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+      background-size: 40px 40px;
+      animation: float 25s ease-in-out infinite;
+      z-index: 0;
+    }
+
+    body::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.05) 50%, transparent 70%);
+      animation: shimmer 8s ease-in-out infinite;
+      z-index: 0;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); }
+      33% { transform: translate(20px, -20px) rotate(120deg); }
+      66% { transform: translate(-15px, 15px) rotate(240deg); }
+    }
+
+    @keyframes shimmer {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 0.8; }
+    }
+
+    .chat-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  padding: 40px;
+  border-radius: 24px;
+  box-shadow: 
+    0 25px 50px rgba(0,0,0,0.15),
+    0 0 0 1px rgba(255, 255, 255, 0.3);
+  width: 700px;
+  
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  z-index: 1;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  margin-bottom: 24px; 
+}
+    .header {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.5em;
+      font-weight: 700;
+      background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+    }
+
+    .tagline {
+      font-size: 1rem;
+      color: #6b7280;
+      font-weight: 300;
+      font-style: italic;
+      margin-bottom: 15px;
+      line-height: 1.4;
+    }
+
+    #chat-box {
+      width: 100%;
+      height: 420px;
+      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+      border-radius: 16px;
+      padding: 24px;
+      overflow-y: auto;
+      font-size: 1.1em;
+      border: 2px solid rgba(102, 126, 234, 0.1);
+      box-shadow: inset 0 2px 8px rgba(0,0,0,0.05);
+      line-height: 1.6;
+      color: #374151;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.3s ease;
+    }
+
+    #chat-box:hover {
+      border-color: rgba(102, 126, 234, 0.2);
+      box-shadow: inset 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    #chat-box p {
+      margin: 0;
+      text-align: left;
+      font-weight: 400;
+    }
+
+    #chat-box::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    #chat-box::-webkit-scrollbar-track {
+      background: rgba(0,0,0,0.05);
+      border-radius: 4px;
+    }
+
+    #chat-box::-webkit-scrollbar-thumb {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      border-radius: 4px;
+    }
+
+    #chat-box::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(135deg, #5a67d8, #6b46c1);
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 16px 20px;
+      border-radius: 12px;
+      font-size: 1.1em;
+      border: 2px solid #e5e7eb;
+      background: rgba(255, 255, 255, 0.9);
+      transition: all 0.3s ease;
+      font-family: 'Inter', sans-serif;
+    }
+
+    input[type="text"]:focus {
+      border: 2px solid #667eea;
+      background: white;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .get-chat-btn {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      font-size: 0.95em;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      align-self: flex-start;
+      margin-bottom: 10px;
+      font-family: 'Inter', sans-serif;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+
+    .get-chat-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+    }
+
+    .save-btn {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: white;
+  border: none;
+  padding: 10px 24px;
+  font-size: 1.1em;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  font-family: 'Inter', sans-serif;
+  box-shadow: 0 6px 16px rgba(245, 158, 11, 0.3);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px; 
+}
+
+    .save-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.5s;
+    }
+
+    .save-btn:hover::before {
+      left: 100%;
+    }
+
+    .save-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 24px rgba(245, 158, 11, 0.4);
+    }
+
+    .save-btn:disabled {
+      background: linear-gradient(135deg, #9ca3af, #6b7280);
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: 0 2px 8px rgba(156, 163, 175, 0.2);
+    }
+
+    .save-btn:disabled::before {
+      display: none;
+    }
+
+    .status-message {
+      padding: 14px 20px;
+      border-radius: 12px;
+      margin-top: 10px;
+      font-weight: 500;
+      font-size: 0.95em;
+      text-align: center;
+      transition: all 0.3s ease;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .success {
+      background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+      color: #065f46;
+      border: 1px solid #a7f3d0;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+    }
+
+    .error {
+      background: linear-gradient(135deg, #fee2e2, #fecaca);
+      color: #991b1b;
+      border: 1px solid #fecaca;
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+    }
+
+    .particle {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.4);
+      border-radius: 50%;
+      pointer-events: none;
+      animation: floatUp 6s ease-in infinite;
+    }
+
+    @keyframes floatUp {
+      0% {
+        opacity: 0;
+        transform: translateY(100px) scale(0);
+      }
+      10% {
+        opacity: 1;
+      }
+      90% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(-100px) scale(1);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .chat-container {
+        width: 95%;
+        height: 90vh;
+        padding: 25px;
+      }
+      
+      h2 {
+        font-size: 2rem;
+      }
+      
+      #chat-box {
+        height: 350px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="chat-container">
+    <div class="header">
+      <h2>LUMORA</h2>
+      <div class="tagline">"Your poetic inspiration has been beautifully crafted into verse"</div>
+    </div>
+    <button onclick="window.location.href='index.html'" class="get-chat-btn">&#8592; Back</button>
+    <div id="chat-box"></div>
+    <button onclick="savePoem()" class="save-btn" id="save-btn">Save</button>
+    <div id="status-message"></div>
+  </div>
+
+  <script>
+    function createParticle() {
+      const particle = document.createElement('div');
+      particle.className = 'particle';
+      particle.style.left = Math.random() * 100 + 'vw';
+      particle.style.width = particle.style.height = Math.random() * 4 + 2 + 'px';
+      particle.style.animationDuration = Math.random() * 2 + 4 + 's';
+      document.body.appendChild(particle);
+
+      setTimeout(() => {
+        particle.remove();
+      }, 7000);
+    }
+
+    setInterval(createParticle, 1200);
+
+    // Get Sarvam's reply from localStorage
+    const botReply = localStorage.getItem('chatBotReply');
+
+function getPoemAfterHash(poem) {
+    const idx = poem.indexOf('#');
+    if (idx === -1) return poem;
+    // Get everything after the first '#' and trim whitespace/newlines
+    return poem.slice(idx + 1).trim();
+}
+
+if (botReply) {
+    const chatBox = document.getElementById('chat-box');
+    const filtered = getPoemAfterHash(botReply);
+    const formatted = filtered.replace(/\n/g, "<br>");
+    chatBox.innerHTML = `<p>${formatted}</p>`;
+}
+    // Clear the stored message 
+    localStorage.removeItem('chatBotReply');
+
+    function showStatus(message, type) {
+      const statusDiv = document.getElementById('status-message');
+      statusDiv.innerHTML = message;
+      statusDiv.className = `status-message ${type}`;
+      
+      // Clear after 5 seconds
+      setTimeout(() => {
+        statusDiv.innerHTML = '';
+        statusDiv.className = '';
+      }, 5000);
+    }
+
+    function savePoem() {
+      const token = localStorage.getItem("token");
+      const replyBox = document.getElementById("chat-box");
+      const saveBtn = document.getElementById("save-btn");
+      
+      // Check if user is logged in
+      if (!token) {
+        showStatus("Please log in first to save poems!", "error");
+        return;
+      }
+
+      // Get poem content (use textContent to avoid HTML tags)
+      const poem = replyBox.textContent.trim();
+
+      if (!poem) {
+        showStatus("No poem to save!", "error");
+        return;
+      }
+
+      // Disable button during save
+      saveBtn.disabled = true;
+      saveBtn.textContent = "Saving...";
+
+      // Make API call to save poem
+      fetch("http://127.0.0.1:8000/save-poem", {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify({
+          token: token,
+          message: poem
+        })
+      })
+      .then(async (response) => {
+        const data = await response.json();
+        
+        if (response.ok) {
+          showStatus("Poem saved successfully! 🎉", "success");
+        } else {
+          // Handle specific error cases
+          if (response.status === 401) {
+            showStatus("Session expired. Please log in again.", "error");
+            localStorage.removeItem("token"); // Clear invalid token
+          } else {
+            showStatus(`Failed to save poem: ${data.detail || 'Unknown error'}`, "error");
+          }
+        }
+      })
+      .catch(err => {
+        console.error("Save error:", err);
+        showStatus("Network error. Please check your connection and try again.", "error");
+      })
+      .finally(() => {
+        // Re-enable button
+        saveBtn.disabled = false;
+        saveBtn.textContent = "Save Poem";
+      });
+    }
+
+    // Check if user is logged in on page load
+    window.addEventListener('load', () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        showStatus("💡 Tip: Log in to save your poems!", "error");
+      }
+    });
+  </script>
+</body>
+</html>

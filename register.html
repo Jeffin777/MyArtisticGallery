@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Register - Poetic Journal</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Animated background elements */
+    body::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+      background-size: 50px 50px;
+      animation: float 20s ease-in-out infinite;
+      z-index: 0;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); }
+      33% { transform: translate(30px, -30px) rotate(120deg); }
+      66% { transform: translate(-20px, 20px) rotate(240deg); }
+    }
+
+    .register-container {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.1),
+        0 0 0 1px rgba(255, 255, 255, 0.2);
+      width: 420px;
+      position: relative;
+      z-index: 1;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: #667eea;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .tagline {
+      font-size: 0.95rem;
+      color: #6b7280;
+      font-weight: 300;
+      font-style: italic;
+      margin-bottom: 25px;
+      line-height: 1.4;
+    }
+
+    .form-group {
+      position: relative;
+      margin-bottom: 24px;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 16px 20px;
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 400;
+      background: rgba(255, 255, 255, 0.8);
+      transition: all 0.3s ease;
+      outline: none;
+    }
+
+    .form-group input:focus {
+      border-color: #667eea;
+      background: rgba(255, 255, 255, 1);
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .form-group input::placeholder {
+      color: #9ca3af;
+      transition: opacity 0.3s ease;
+    }
+
+    .form-group input:focus::placeholder {
+      opacity: 0.7;
+    }
+
+    .register-btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      border: none;
+      color: white;
+      font-size: 1.1rem;
+      font-weight: 500;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+
+    .register-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.5s;
+    }
+
+    .register-btn:hover::before {
+      left: 100%;
+    }
+
+    .register-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+    }
+
+    .register-btn:active {
+      transform: translateY(0);
+    }
+
+    .message {
+      margin-bottom: 20px;
+      text-align: center;
+      color: #ef4444;
+      font-size: 0.9rem;
+      font-weight: 400;
+      padding: 10px;
+      border-radius: 8px;
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      display: none;
+    }
+
+    .message.show {
+      display: block;
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .login-link {
+      text-align: center;
+      font-size: 0.95rem;
+      color: #6b7280;
+    }
+
+    .login-link a {
+      color: #667eea;
+      text-decoration: none;
+      font-weight: 500;
+      position: relative;
+      transition: color 0.3s ease;
+    }
+
+    .login-link a::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: -2px;
+      left: 0;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      transition: width 0.3s ease;
+    }
+
+    .login-link a:hover::after {
+      width: 100%;
+    }
+
+    .login-link a:hover {
+      color: #764ba2;
+    }
+
+    /* Floating particles animation */
+    .particle {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.6);
+      border-radius: 50%;
+      pointer-events: none;
+      animation: floatUp 4s ease-in infinite;
+    }
+
+    @keyframes floatUp {
+      0% {
+        opacity: 0;
+        transform: translateY(100px) scale(0);
+      }
+      10% {
+        opacity: 1;
+      }
+      90% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(-100px) scale(1);
+      }
+    }
+
+    /* Responsive design */
+    @media (max-width: 480px) {
+      .register-container {
+        width: 90%;
+        padding: 30px 25px;
+        margin: 20px;
+      }
+      
+      .logo {
+        font-size: 1.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="register-container">
+  <div class="header">
+    <div class="logo">LUMORA</div>
+    <div class="tagline">"Where thoughts bloom into verses, and memories dance with words"</div>
+  </div>
+
+  <div class="form-group">
+    <input type="text" id="username" placeholder="Enter your name..." />
+  </div>
+
+  <div class="form-group">
+    <input type="password" id="password" placeholder="Create your secret verse..." />
+  </div>
+
+  <button class="register-btn" onclick="registerUser()">
+    Join the Journey of Art
+  </button>
+
+  <div class="message" id="message"></div>
+
+  <div class="login-link">
+    Already have an account? <a href="login.html">Sign in to your journal</a>
+  </div>
+</div>
+
+<script>
+  // Create floating particles
+  function createParticle() {
+    const particle = document.createElement('div');
+    particle.className = 'particle';
+    particle.style.left = Math.random() * 100 + 'vw';
+    particle.style.width = particle.style.height = Math.random() * 6 + 2 + 'px';
+    particle.style.animationDuration = Math.random() * 3 + 2 + 's';
+    document.body.appendChild(particle);
+
+    setTimeout(() => {
+      particle.remove();
+    }, 5000);
+  }
+
+  // Generate particles periodically
+  setInterval(createParticle, 800);
+
+  async function registerUser() {
+    const username = document.getElementById("username").value.trim();
+    const password = document.getElementById("password").value.trim();
+    const msg = document.getElementById("message");
+
+    // Clear previous message
+    msg.classList.remove("show");
+
+    if (!username || !password) {
+      msg.textContent = "Please fill in both your pen name and secret verse.";
+      msg.classList.add("show");
+      return;
+    }
+
+    if (password.length < 6) {
+      msg.textContent = "Your secret verse should be at least 6 characters long.";
+      msg.classList.add("show");
+      return;
+    }
+
+    try {
+      const res = await fetch("http://127.0.0.1:8000/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password })
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        // Success animation
+        const btn = document.querySelector('.register-btn');
+        btn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+        btn.textContent = 'Welcome, poet! ✨';
+        
+        setTimeout(() => {
+          alert("Welcome to your poetic sanctuary! You can now sign in and begin writing.");
+          window.location.href = "login.html";
+        }, 1000);
+      } else {
+        msg.textContent = data.detail || "Unable to create your account. Please try again.";
+        msg.classList.add("show");
+      }
+    } catch (error) {
+      msg.textContent = "Connection error. Please check your network and try again.";
+      msg.classList.add("show");
+    }
+  }
+
+  // Enhanced form interactions
+  document.querySelectorAll('input').forEach(input => {
+    input.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        registerUser();
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
